@@ -1,15 +1,13 @@
-class Player {
+class Player extends MovingWrappedPosition {
   THRUST_POWER = 0.15;
   TURN_RATE = 0.02;
   SPACESPEED_DECAY_MULT = 0.99;
 
   constructor(name) {
+    super();
+    
     this.name = name;
     this.score = 0;
-    this.x;
-    this.y;
-    this.driftX;
-    this.driftY;
     this.angle;
 
     this.keyHeld_Thrust = false;
@@ -19,42 +17,35 @@ class Player {
 
   init(img) {
     this.imgSprite = img;
+    this.shot = new Shot();
+
     this.reset();
   }
 
-  setupControls(thrustKey, eastKey, westKey) {
+  setupControls(thrustKey, rightKey, leftKey, shotKey) {
     this.controlKeyThrust = thrustKey;
-    this.controlKeyEast = eastKey;
-    this.controlKeyWest = westKey;
+    this.controlKeyRight = rightKey;
+    this.controlKeyLeft = leftKey;
+    this.controlKeyShoot = shotKey;
   }
 
   reset() {
-    this.driftX = 0;
-    this.driftY = 0;
     this.angle = 0;
 
-    this.x = canvas.width / 2;
-    this.y = canvas.height / 2;
+    super.reset();
+    this.shot.reset();
   }
 
-  handleScreenWrap() {
-    if (this.x < 0) {
-      this.x += canvas.width;
-    } else if (this.x > canvas.width) {
-      this.x -= canvas.width;
-    }
-
-    if (this.y < 0) {
-      this.y += canvas.height;
-    } else if (this.y > canvas.height) {
-      this.y -= canvas.height;
+  fire() {
+    if (this.shot.isReadyToFire()) {
+      this.shot.shootFrom(this);
     }
   }
 
   move() {
     if (this.keyHeld_Thrust) {
-      this.driftX += Math.cos(this.angle) * this.THRUST_POWER;
-      this.driftY += Math.sin(this.angle) * this.THRUST_POWER;
+      this.xv += Math.cos(this.angle) * this.THRUST_POWER;
+      this.yv += Math.sin(this.angle) * this.THRUST_POWER;
     }
     if (this.keyHeld_West) {
       this.angle += -this.TURN_RATE * Math.PI;
@@ -63,15 +54,19 @@ class Player {
       this.angle += this.TURN_RATE * Math.PI;
     }
    
-    this.x = this.x + this.driftX;
-    this.y = this.y + this.driftY;
-    this.driftX *= this.SPACESPEED_DECAY_MULT;
-    this.driftY *= this.SPACESPEED_DECAY_MULT;
+    super.move();
+
+    this.xv *= this.SPACESPEED_DECAY_MULT;
+    this.yv *= this.SPACESPEED_DECAY_MULT;
 
     this.handleScreenWrap();
+    
+    this.shot.move();
   }
 
   draw() {
+    this.shot.draw();
+
     drawImageCenteredAtLocationWithRotation(this.imgSprite, this.x, this.y, this.angle);
   }
 }
