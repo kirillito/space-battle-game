@@ -29,6 +29,13 @@ class Shot extends MovingWrappedPosition {
     return (this.shotLife <= 0)
   }
 
+  isHit(enemy) {
+    if (this.shotLife <= 0) {
+      return false;
+    }
+    return enemy.isColliding(this.x, this.y);
+  }
+
   move() {
     if (this.shotLife > 0) {
       this.shotLife--;

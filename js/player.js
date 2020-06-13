@@ -42,6 +42,18 @@ class Player extends MovingWrappedPosition {
     }
   }
 
+  checkCollisions(enemy) {
+    if (enemy.isColliding(this.x, this.y)) {
+      this.reset();
+      console.log('Your ship has crashed!');
+    }
+    if (this.shot.isHit(enemy)) {
+      enemy.die();
+      this.shot.reset();
+      console.log('Enemy killed!');
+    }
+  }
+
   move() {
     if (this.keyHeld_Thrust) {
       this.xv += Math.cos(this.angle) * this.THRUST_POWER;

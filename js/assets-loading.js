@@ -1,4 +1,6 @@
+var bgPic = new Image();
 var playerPic = new Image();
+var enemyPic = new Image();
 var tilePics = [];
 
 var imagesToLoad = 0;
@@ -11,7 +13,8 @@ function loadImageForTileCode(tileCode, fileName) {
 function loadImages() {
   var	imageList	=	[
     {imgNode:playerPic,	fileName:"player.png"},
-    
+    {imgNode:enemyPic, fileName:"enemy.png"},
+    {imgNode:bgPic, fileName:"bg.png"},
 
     ];
     
